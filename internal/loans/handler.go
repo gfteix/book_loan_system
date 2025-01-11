@@ -1,5 +1,6 @@
 package loans
 
+/*
 import (
 	"net/http"
 
@@ -19,3 +20,4 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /loans", h.handleGetLoans) // add query params, userId, bookId, bookItemId
 	router.HandleFunc("GET /loans/{id}", h.handleGetLoanById)
 }
+*/

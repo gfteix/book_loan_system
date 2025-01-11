@@ -8,6 +8,7 @@ import (
 	"github.com/gfteix/book_loan_system/pkg/utils"
 	"github.com/gfteix/book_loan_system/types"
 	"github.com/go-playground/validator"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -26,8 +27,29 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	log.Print("handleGetUserById")
 
-	w.Write([]byte("ola"))
+	id := r.PathValue("id")
 
+	err := uuid.Validate(id)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid id"))
+		return
+	}
+
+	user, err := h.repository.GetUserById(id)
+
+	if err != nil {
+		log.Printf("error on handleGetUserById %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if user == nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("not found"))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, user)
 }
 
 func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {

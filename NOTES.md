@@ -37,6 +37,17 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE books (
+    id UUID PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    isbn TEXT UNIQUE NOT NULL,
+    author TEXT NOT NULL,
+    number_of_pages INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 ```
 
 
@@ -49,11 +60,28 @@ curl -X POST http://localhost:8080/users \
 -H "Content-Type: application/json" \
 -d '{
   "name": "John",
-  "email": "john@example.com",
+  "email": "john@example.com"
 }' -v
 
 ```
 
+```
+curl http://localhost:8080/users/528a1dbc-d391-46e3-b818-6cf78e4344d2
+```
+
+```
+
+curl -X POST http://localhost:8080/books \
+-H "Content-Type: application/json" \
+-d '{
+  "title": "title",
+  "description": "some description",
+  "isbn": "1",
+  "author": "author",
+  "numberOfPages": 100
+}' -v
+
+```
 ---
 
 Email handler should receive an event type along with the userId/loanId

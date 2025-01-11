@@ -46,10 +46,14 @@ type UserRepository interface {
 
 type BookRepository interface {
 	GetBookById(id string) (*Book, error)
+	GetBooks(filter map[string]string) ([]Book, error)
 	GetBookItemsByBookId(id string) ([]BookItem, error)
 	GetBookItemById(id string) (*BookItem, error)
 	CreateBook(book Book) error
 	CreateBookItem(bookItem BookItem) error
+}
+
+type LoanRepository interface {
 	CreateLoan(loan Loan) error
 	GetLoan(id string) ([]Loan, error)
 	GetLoans() ([]Loan, error)
@@ -58,4 +62,18 @@ type BookRepository interface {
 type CreateUserPayload struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
+}
+
+type CreateBookPayload struct {
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	ISBN          string `json:"isbn"`
+	Author        string `json:"author"`
+	NumberOfPages int    `json:"numberOfPages"`
+}
+
+type CreateBookItem struct {
+	UserId string `json:"userId"`
+	BookId string `json:"bookId"`
+	Status string `json:"status"`
 }

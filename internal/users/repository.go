@@ -45,7 +45,7 @@ func (r *Repository) CreateUser(user types.User) error {
 }
 
 func (r *Repository) GetUserById(id string) (*types.User, error) {
-	rows, err := r.db.Query("SELECT id, name, email, created_at FROM users WHERE id = ?", id)
+	rows, err := r.db.Query("SELECT id, name, email, created_at FROM users WHERE id = $1", id)
 
 	if err != nil {
 		return nil, err
