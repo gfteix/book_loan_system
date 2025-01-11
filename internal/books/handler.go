@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gfteix/book_loan_system/pkg/utils"
 	"github.com/gfteix/book_loan_system/types"
 	"github.com/go-playground/validator"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -99,8 +99,6 @@ func (h *Handler) handleCreateBook(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleCreateBookItem(w http.ResponseWriter, r *http.Request) {
 	log.Print("handleCreateBookItem")
 
-	bookId := r.PathValue("id")
-
 	var payload types.CreateBookItem
 
 	err := utils.ParseJson(r, &payload)
@@ -110,17 +108,37 @@ func (h *Handler) handleCreateBookItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload.BookId = bookId
 	if err := validator.New().Struct(payload); err != nil {
 		errors := err.(validator.ValidationErrors)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload %v", errors))
 		return
 	}
 
+	err = uuid.Validate(payload.BookId)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid bookId"))
+		return
+	}
+
+	book, err := h.repository.GetBookById(payload.BookId)
+
+	if err != nil {
+		log.Printf("error on GetBookById %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if book == nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid bookId"))
+		return
+	}
+
 	err = h.repository.CreateBookItem(types.BookItem{
-		UserId: payload.UserId,
-		BookId: payload.BookId,
-		Status: payload.Status,
+		BookId:    payload.BookId,
+		Status:    payload.Status,
+		Location:  payload.Location,
+		Condition: payload.Condition,
 	})
 
 	if err != nil {
@@ -145,13 +163,7 @@ func (h *Handler) handleGetBookItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleGetBookItemById(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
-
-	if len(parts) < 4 {
-		http.NotFound(w, r)
-		return
-	}
-	itemId := parts[3]
+	itemId := r.PathValue("itemId")
 
 	bookItem, err := h.repository.GetBookItemById(itemId)
 	if err != nil {

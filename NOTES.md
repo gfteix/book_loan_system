@@ -48,6 +48,16 @@ CREATE TABLE books (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE book_items (
+    id UUID PRIMARY KEY,
+    book_id UUID NOT NULL,
+    location TEXT NOT NULL,
+    condition TEXT,
+    status TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_book FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE
+);
 ```
 
 
@@ -79,6 +89,26 @@ curl -X POST http://localhost:8080/books \
   "isbn": "1",
   "author": "author",
   "numberOfPages": 100
+}' -v
+
+```
+
+```
+curl "http://localhost:8080/books?title=sometitle"
+```
+
+```
+curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872
+```
+
+```
+curl -X POST http://localhost:8080/books/{id}/items \
+-H "Content-Type: application/json" \
+-d '{
+  "bookId": "cca29657-a87d-4300-a4b4-a3163a054872",
+  "status": "available",
+  "condition":"good",
+  "location": "section b"
 }' -v
 
 ```

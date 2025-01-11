@@ -21,8 +21,9 @@ type Book struct {
 
 type BookItem struct {
 	Id        string    `json:"id"`
-	UserId    string    `json:"userId"`
 	BookId    string    `json:"bookId"`
+	Location  string    `json:"location"`
+	Condition string    `json:"condition"`
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -73,7 +74,8 @@ type CreateBookPayload struct {
 }
 
 type CreateBookItem struct {
-	UserId string `json:"userId"`
-	BookId string `json:"bookId"`
-	Status string `json:"status"`
+	BookId    string `json:"bookId"`
+	Status    string `json:"status"`
+	Condition string `json:"condition"`
+	Location  string `json:"location"`
 }

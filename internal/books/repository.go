@@ -39,9 +39,10 @@ func scanRowIntoBookItem(rows *sql.Rows) (*types.BookItem, error) {
 	bookItem := new(types.BookItem)
 	err := rows.Scan(
 		&bookItem.Id,
-		&bookItem.UserId,
 		&bookItem.BookId,
 		&bookItem.Status,
+		&bookItem.Location,
+		&bookItem.Condition,
 		&bookItem.CreatedAt,
 	)
 	if err != nil {
@@ -128,7 +129,7 @@ func (r *Repository) GetBooks(filters map[string]string) ([]types.Book, error) {
 }
 
 func (r *Repository) GetBookItemsByBookId(id string) ([]types.BookItem, error) {
-	rows, err := r.db.Query("SELECT id, user_id, book_id, status, created_at FROM book_items WHERE book_id = $1", id)
+	rows, err := r.db.Query("SELECT id, book_id, status, location, condition, created_at FROM book_items WHERE book_id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +148,7 @@ func (r *Repository) GetBookItemsByBookId(id string) ([]types.BookItem, error) {
 }
 
 func (r *Repository) GetBookItemById(id string) (*types.BookItem, error) {
-	rows, err := r.db.Query("SELECT id, user_id, book_id, status, created_at FROM book_items WHERE id = $1", id)
+	rows, err := r.db.Query("SELECT id, book_id, status, location, condition, created_at FROM book_items WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -173,8 +174,8 @@ func (r *Repository) CreateBook(book types.Book) error {
 
 func (r *Repository) CreateBookItem(bookItem types.BookItem) error {
 	id := uuid.NewString()
-	_, err := r.db.Exec("INSERT INTO book_items (id, user_id, book_id, status) VALUES ($1, $2, $3, $4)",
-		id, bookItem.UserId, bookItem.BookId, bookItem.Status)
+	_, err := r.db.Exec("INSERT INTO book_items (id, book_id, status, location, condition) VALUES ($1, $2, $3, $4, $5)",
+		id, bookItem.BookId, bookItem.Status, bookItem.Location, bookItem.Condition)
 	if err != nil {
 		return err
 	}
