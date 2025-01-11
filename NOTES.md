@@ -101,6 +101,7 @@ curl "http://localhost:8080/books?title=sometitle"
 curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872
 ```
 
+
 ```
 curl -X POST http://localhost:8080/books/{id}/items \
 -H "Content-Type: application/json" \
@@ -110,6 +111,12 @@ curl -X POST http://localhost:8080/books/{id}/items \
   "condition":"good",
   "location": "section b"
 }' -v
+
+```
+
+```
+curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872/items
+```
 
 ```
 ---

@@ -34,3 +34,10 @@ System Design
 - Build API
 - Build loan expiring job
 - Build email handler
+
+
+---
+
+## How to run
+
+`make api-run`
