@@ -53,3 +53,28 @@ curl -X POST http://localhost:8080/users \
 }' -v
 
 ```
+
+---
+
+Email handler should receive an event type along with the userId/loanId
+
+Notifications:
+- should send reminder to return the book; reminder should be send 2 days before the expected return date
+- should send alert on the day of the expiring date if not returned yet
+
+Payloads structure:
+
+```
+{
+  "source": string, // file source or api source endpoint
+  "time": string, // time of event generation
+  "event-id": string, // uuid
+  "type": string // "loan-expiring" || "loan-ended"
+  "payload": {
+    "userId": string,
+    "loanId": string,
+  }
+}
+```
+
+- Use DLQ if there are failures when sending email

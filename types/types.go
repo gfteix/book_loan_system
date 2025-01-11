@@ -28,20 +28,31 @@ type BookItem struct {
 }
 
 type Loan struct {
-	Id                 string    `json:"id"`
-	UserId             string    `json:"userId"`
-	BookItemId         string    `json:"bookItemId"`
-	Status             string    `json:"status"`
-	ExpectedReturnDate time.Time `json:"expectedReturnDate"`
-	ReturnDate         time.Time `json:"returnDate"`
-	LoanDate           time.Time `json:"loanDate"`
-	CreatedAt          time.Time `json:"createdAt"`
+	Id           string    `json:"id"`
+	UserId       string    `json:"userId"`
+	BookItemId   string    `json:"bookItemId"`
+	Status       string    `json:"status"`
+	ExpiringDate time.Time `json:"expiringDate"`
+	ReturnDate   time.Time `json:"returnDate"`
+	LoanDate     time.Time `json:"loanDate"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
 type UserRepository interface {
 	GetUserById(id string) (*User, error)
 	GetUserByEmail(id string) (*User, error)
 	CreateUser(user User) error
+}
+
+type BookRepository interface {
+	GetBookById(id string) (*Book, error)
+	GetBookItemsByBookId(id string) ([]BookItem, error)
+	GetBookItemById(id string) (*BookItem, error)
+	CreateBook(book Book) error
+	CreateBookItem(bookItem BookItem) error
+	CreateLoan(loan Loan) error
+	GetLoan(id string) ([]Loan, error)
+	GetLoans() ([]Loan, error)
 }
 
 type CreateUserPayload struct {
