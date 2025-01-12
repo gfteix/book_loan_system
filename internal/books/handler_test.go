@@ -201,7 +201,7 @@ func TestBookHandler(t *testing.T) {
 	})
 
 	t.Run("should fail to create book item with invalid book ID", func(t *testing.T) {
-		payload := types.CreateBookItem{
+		payload := types.CreateBookItemPayload{
 			BookId:    "invalid-id",
 			Status:    "Available",
 			Location:  "Library",

@@ -99,7 +99,7 @@ func (h *Handler) handleCreateBook(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleCreateBookItem(w http.ResponseWriter, r *http.Request) {
 	log.Print("handleCreateBookItem")
 
-	var payload types.CreateBookItem
+	var payload types.CreateBookItemPayload
 
 	err := utils.ParseJson(r, &payload)
 	if err != nil {

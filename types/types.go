@@ -73,9 +73,17 @@ type CreateBookPayload struct {
 	NumberOfPages int    `json:"numberOfPages"`
 }
 
-type CreateBookItem struct {
+type CreateBookItemPayload struct {
 	BookId    string `json:"bookId"`
 	Status    string `json:"status"`
 	Condition string `json:"condition"`
 	Location  string `json:"location"`
+}
+
+type CreateLoanPayload struct {
+	UserId       string    `json:"userId"`
+	BookItemId   string    `json:"bookItemId"`
+	Status       string    `json:"status"`
+	ExpiringDate time.Time `json:"expiringDate"`
+	LoanDate     time.Time `json:"loanDate"`
 }
