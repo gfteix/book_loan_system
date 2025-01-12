@@ -148,6 +148,10 @@ curl -X POST http://localhost:8080/loans \
 
 ```
 
+- Get Loans
+
+curl "http://localhost:8080/loans?userId=528a1dbc-d391-46e3-b818-6cf78e4344d2"
+
 ---
 
 Email handler should receive an event type along with the userId/loanId

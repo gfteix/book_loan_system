@@ -130,7 +130,7 @@ func (r *Repository) GetLoans(filters map[string]string) ([]types.Loan, error) {
 		}
 
 		if k == "userId" {
-			where = append(where, fmt.Sprintf("userId = $%v", whereIndex))
+			where = append(where, fmt.Sprintf("user_id = $%v", whereIndex))
 			whereValues = append(whereValues, v)
 			whereIndex++
 		}
@@ -142,7 +142,7 @@ func (r *Repository) GetLoans(filters map[string]string) ([]types.Loan, error) {
 		}
 
 		if k == "bookItemId" {
-			where = append(where, fmt.Sprintf("bookItemId = $%v", whereIndex))
+			where = append(where, fmt.Sprintf("book_item_id = $%v", whereIndex))
 			whereValues = append(whereValues, v)
 			whereIndex++
 		}
@@ -165,7 +165,8 @@ func (r *Repository) GetLoans(filters map[string]string) ([]types.Loan, error) {
 	}
 	defer rows.Close()
 
-	var loans []types.Loan
+	loans := make([]types.Loan, 0)
+
 	for rows.Next() {
 		loan, err := scanRowIntoLoan(rows)
 		if err != nil {

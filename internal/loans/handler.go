@@ -7,6 +7,7 @@ import (
 
 	"github.com/gfteix/book_loan_system/pkg/utils"
 	"github.com/gfteix/book_loan_system/types"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -73,6 +74,14 @@ func (h *Handler) handleGetLoans(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleGetLoanById(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
+
+	err := uuid.Validate(id)
+
+	if err != nil {
+		log.Printf("invalid id %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("invalid id"))
+		return
+	}
 
 	loan, err := h.repository.GetLoan(id)
 
