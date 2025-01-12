@@ -58,6 +58,21 @@ CREATE TABLE book_items (
 
     CONSTRAINT fk_book FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE
 );
+
+CREATE TABLE loans (
+    id UUID PRIMARY KEY,
+    book_item_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    status TEXT NOT NULL,
+    loan_date TIMESTAMP,
+    expiring_date TIMESTAMP,
+    return_date TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_book_item_id FOREIGN KEY(book_item_id) REFERENCES book_items(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 ```
 
 
@@ -118,7 +133,21 @@ curl -X POST http://localhost:8080/books/{id}/items \
 curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872/items
 ```
 
+- Create Loans
+
 ```
+curl -X POST http://localhost:8080/loans \
+-H "Content-Type: application/json" \
+-d '{
+  "userId": "528a1dbc-d391-46e3-b818-6cf78e4344d2",
+  "status": "active",
+  "bookItemId":"15caa834-4c8b-4c75-833f-bbad805e8a3c",
+  "loanDate": "2025-01-12T15:30:00Z",
+  "expiringDate": "2025-02-12T15:30:00Z"
+}' -v
+
+```
+
 ---
 
 Email handler should receive an event type along with the userId/loanId

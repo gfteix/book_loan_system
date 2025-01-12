@@ -10,6 +10,7 @@ import (
 	"github.com/gfteix/book_loan_system/pkg/db"
 
 	"github.com/gfteix/book_loan_system/internal/books"
+	"github.com/gfteix/book_loan_system/internal/loans"
 	"github.com/gfteix/book_loan_system/internal/users"
 )
 
@@ -56,6 +57,10 @@ func (s *APIServer) Run() error {
 	bookRepository := books.NewRepository(s.db)
 	bookHandler := books.NewHandler(bookRepository)
 	bookHandler.RegisterRoutes(router)
+
+	loanRepository := loans.NewRepository(s.db)
+	loanHandler := loans.NewHandler(loanRepository)
+	loanHandler.RegisterRoutes(router)
 
 	log.Printf("Listening on %v", s.addr)
 

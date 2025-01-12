@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type User struct {
 	Id        string    `json:"id"`
@@ -29,14 +32,14 @@ type BookItem struct {
 }
 
 type Loan struct {
-	Id           string    `json:"id"`
-	UserId       string    `json:"userId"`
-	BookItemId   string    `json:"bookItemId"`
-	Status       string    `json:"status"`
-	ExpiringDate time.Time `json:"expiringDate"`
-	ReturnDate   time.Time `json:"returnDate"`
-	LoanDate     time.Time `json:"loanDate"`
-	CreatedAt    time.Time `json:"createdAt"`
+	Id           string     `json:"id"`
+	UserId       string     `json:"userId"`
+	BookItemId   string     `json:"bookItemId"`
+	Status       string     `json:"status"`
+	ExpiringDate time.Time  `json:"expiringDate"`
+	ReturnDate   *time.Time `json:"returnDate,omitempty"`
+	LoanDate     time.Time  `json:"loanDate"`
+	CreatedAt    time.Time  `json:"createdAt"`
 }
 
 type UserRepository interface {
@@ -55,9 +58,9 @@ type BookRepository interface {
 }
 
 type LoanRepository interface {
-	CreateLoan(loan Loan) error
-	GetLoan(id string) ([]Loan, error)
-	GetLoans() ([]Loan, error)
+	CreateLoan(ctx context.Context, loan Loan) error
+	GetLoan(id string) (*Loan, error)
+	GetLoans(filters map[string]string) ([]Loan, error)
 }
 
 type CreateUserPayload struct {

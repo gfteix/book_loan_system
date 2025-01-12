@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gfteix/book_loan_system/types"
 	"github.com/google/uuid"
@@ -75,18 +76,22 @@ func (r *Repository) CreateLoan(ctx context.Context, loan types.Loan) error {
 		return fmt.Errorf("no related book item found for %v", loan.BookItemId)
 	}
 
-	_, err = tx.ExecContext(ctx, "UPDATE book_items SET status = lent WHERE id = $1", loan.BookItemId)
+	_, err = tx.ExecContext(ctx, "UPDATE book_items SET status = 'lent' WHERE id = $1", loan.BookItemId)
 
 	if err != nil {
 		log.Printf("error while updating book item %v", err)
 		return fail(tx, err)
 	}
 
-	_, err = tx.ExecContext(ctx, "INSERT INTO loans (id, user_id, book_item_id, status, expiring_date, return_date, loan_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+	_, err = tx.ExecContext(ctx, "INSERT INTO loans (id, user_id, book_item_id, status, expiring_date, return_date, loan_date) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		uuid.NewString(), loan.UserId, loan.BookItemId, loan.Status, loan.ExpiringDate, loan.ReturnDate, loan.LoanDate)
 
 	if err != nil {
 		log.Printf("error while creating loan %v", err)
+		return fail(tx, err)
+	}
+
+	if err = tx.Commit(); err != nil {
 		return fail(tx, err)
 	}
 
@@ -112,8 +117,49 @@ func (r *Repository) GetLoan(id string) (*types.Loan, error) {
 	return loan, nil
 }
 
-func (r *Repository) GetLoans() ([]types.Loan, error) {
-	rows, err := r.db.Query("SELECT id, user_id, book_item_id, status, expiring_date, return_date, loan_date, created_at FROM loans")
+func (r *Repository) GetLoans(filters map[string]string) ([]types.Loan, error) {
+	q := ("SELECT id, user_id, book_item_id, status, expiring_date, return_date, loan_date, created_at FROM loans")
+
+	where := make([]string, 0)
+	whereValues := make([]string, 0)
+
+	whereIndex := 1
+	for k, v := range filters {
+		if v == "" {
+			continue
+		}
+
+		if k == "userId" {
+			where = append(where, fmt.Sprintf("userId = $%v", whereIndex))
+			whereValues = append(whereValues, v)
+			whereIndex++
+		}
+
+		if k == "status" {
+			where = append(where, fmt.Sprintf("status = $%v", whereIndex))
+			whereValues = append(whereValues, v)
+			whereIndex++
+		}
+
+		if k == "bookItemId" {
+			where = append(where, fmt.Sprintf("bookItemId = $%v", whereIndex))
+			whereValues = append(whereValues, v)
+			whereIndex++
+		}
+	}
+
+	if len(where) > 0 {
+		q = fmt.Sprintf("%v WHERE %v", q, strings.Join(where, " AND "))
+		q = strings.TrimSuffix(q, " AND ")
+	}
+	args := make([]interface{}, len(whereValues))
+
+	for i, v := range whereValues {
+		args[i] = v
+	}
+
+	rows, err := r.db.Query(q, args...)
+
 	if err != nil {
 		return nil, err
 	}

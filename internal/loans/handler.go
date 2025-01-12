@@ -24,9 +24,10 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 }
 
 func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
 	var payload types.CreateLoanPayload
-	err := utils.ParseJson(r, payload)
+
+	err := utils.ParseJson(r, &payload)
 
 	if err != nil {
 		log.Printf("error on ParseJson %v", err)
@@ -34,7 +35,7 @@ func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.repository.CreateLoan(types.Loan{
+	err = h.repository.CreateLoan(ctx, types.Loan{
 		UserId:       payload.UserId,
 		BookItemId:   payload.BookItemId,
 		Status:       payload.Status,
@@ -52,7 +53,22 @@ func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleGetLoans(w http.ResponseWriter, r *http.Request) {
+	queryParams := r.URL.Query()
 
+	filter := make(map[string]string)
+
+	filter["userId"] = queryParams.Get("userId")
+	filter["status"] = queryParams.Get("status")
+	filter["bookItemId"] = queryParams.Get("bookItemIds")
+
+	books, err := h.repository.GetLoans(filter)
+
+	if err != nil {
+		log.Printf("error on GetBooks %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+	utils.WriteJSON(w, http.StatusOK, books)
 }
 
 func (h *Handler) handleGetLoanById(w http.ResponseWriter, r *http.Request) {
