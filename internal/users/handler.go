@@ -53,8 +53,6 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
-	log.Print("handleCreateUser")
-
 	var payload types.CreateUserPayload
 
 	err := utils.ParseJson(r, &payload)

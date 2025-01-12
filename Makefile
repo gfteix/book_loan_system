@@ -5,7 +5,7 @@ api-run: api-build
 	@./bin/api
 
 test:
-	@go test -v ./...
+	@go test -v ./... -cover
 
 migration:
 	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
