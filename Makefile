@@ -15,3 +15,9 @@ migrate-up:
 
 migrate-down:
 	@go run cmd/migrate/main.go down
+
+reminder-build:
+	@go build -o bin/reminder cmd/loan-reminder/main.go
+
+reminder-run: reminder-build
+	@./bin/reminder

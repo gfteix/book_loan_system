@@ -143,7 +143,7 @@ curl -X POST http://localhost:8080/loans \
   "status": "active",
   "bookItemId":"15caa834-4c8b-4c75-833f-bbad805e8a3c",
   "loanDate": "2025-01-12T15:30:00Z",
-  "expiringDate": "2025-02-12T15:30:00Z"
+  "expiringDate": "2025-01-14T15:30:00Z"
 }' -v
 
 ```
@@ -176,3 +176,18 @@ Payloads structure:
 ```
 
 - Use DLQ if there are failures when sending email
+
+---
+
+## RabbitMQ
+
+Docker command:
+
+```
+# latest RabbitMQ 4.0.x
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4.0-management
+```
+
+- Port 5672: Enables application-level communication with RabbitMQ (the main messaging functionality).
+
+- Port 15672: Allows you to monitor and manage RabbitMQ using a web browser.

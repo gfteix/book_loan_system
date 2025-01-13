@@ -90,3 +90,16 @@ type CreateLoanPayload struct {
 	ExpiringDate time.Time `json:"expiringDate"`
 	LoanDate     time.Time `json:"loanDate"`
 }
+
+type EventPayload struct {
+	UserId string `json:"userId"`
+	LoanId string `json:"loanId"`
+}
+
+type Event struct {
+	Source  string       `json:"source"`
+	Time    string       `json:"time"`
+	EventId string       `json:"eventId"`
+	Type    string       `json:"type"`
+	Payload EventPayload `json:"payload"`
+}
