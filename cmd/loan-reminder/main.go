@@ -68,7 +68,7 @@ func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queu
 
 	err := ch.PublishWithContext(ctx,
 		"",
-		mq.QueueLoanExpired,
+		queue,
 		false,
 		false,
 		amqp.Publishing{
@@ -84,7 +84,11 @@ func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queu
 }
 
 func process(loans []types.Loan) {
-	ch, ctx := mq.NewRabbitMQClient()
+	conn, ch, ctx, cancelFunc := mq.NewRabbitMQClient()
+
+	defer conn.Close()
+	defer ch.Close()
+	defer cancelFunc()
 
 	for _, l := range loans {
 

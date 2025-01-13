@@ -38,21 +38,19 @@ func setQueues(ch *amqp.Channel) {
 	failOnError(err, fmt.Sprintf("Failed to declare %v queue", QueueLoanExpired))
 }
 
-func NewRabbitMQClient() (*amqp.Channel, context.Context) {
+func NewRabbitMQClient() (*amqp.Connection, *amqp.Channel, context.Context, context.CancelFunc) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	setQueues(ch)
 
-	return ch, ctx
+	return conn, ch, ctx, cancel
 }
 
 func failOnError(err error, msg string) {
