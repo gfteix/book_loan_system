@@ -12,42 +12,45 @@ const (
 	QueueLoanExpired  string = "loan-expired"
 )
 
-func DeclareQueues(ch *amqp.Channel) {
-	_, err := ch.QueueDeclare(
-		QueueLoanExpiring, // name
-		false,             // durable
-		false,             // delete when unused
-		false,             // exclusive
-		false,             // no-wait
-		nil,               // arguments
+func DeclareQueue(ch *amqp.Channel, name string) (*amqp.Queue, error) {
+	q, err := ch.QueueDeclare(
+		name,
+		false,
+		false,
+		false,
+		false,
+		nil,
 	)
 
-	failOnError(err, fmt.Sprintf("Failed to declare %v queue", QueueLoanExpiring))
+	if err != nil {
+		fmt.Printf("failed to declare %v queue", QueueLoanExpiring)
+		return nil, err
+	}
 
-	_, err = ch.QueueDeclare(
-		QueueLoanExpired, // name
-		false,            // durable
-		false,            // delete when unused
-		false,            // exclusive
-		false,            // no-wait
-		nil,              // arguments
-	)
-
-	failOnError(err, fmt.Sprintf("Failed to declare %v queue", QueueLoanExpired))
+	return &q, nil
 }
 
-func NewRabbitMQClient() (*amqp.Connection, *amqp.Channel) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
+type MQConfig struct {
+	Username string
+	Password string
+	Host     string
+	Port     string
+}
+
+func NewRabbitMQClient(config MQConfig) (*amqp.Connection, *amqp.Channel, error) {
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://%v:%v@%v:%v/", config.Username, config.Password, config.Host, config.Port))
+
+	if err != nil {
+		log.Printf("failed to open rabbit mq connection %v", err)
+		return nil, nil, err
+	}
 
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
 
-	return conn, ch
-}
-
-func failOnError(err error, msg string) {
 	if err != nil {
-		log.Panicf("%s: %s", msg, err)
+		log.Printf("failed to open rabbit mq channel %v", err)
+		return nil, nil, err
 	}
+
+	return conn, ch, nil
 }

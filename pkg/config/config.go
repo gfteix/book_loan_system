@@ -14,6 +14,11 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
+
+	MQUsername string
+	MQPassword string
+	MQPort     string
+	MQHost     string
 }
 
 var Envs = initConfig()
@@ -37,5 +42,9 @@ func initConfig() Config {
 		DBHost:     getEnv("DB_HOST", "127.0.0.1"),
 		DBName:     getEnv("DB_NAME", "library"),
 		DBPort:     getEnv("DB_PORT", "5432"),
+		MQUsername: getEnv("MQ_USERNAME", "guest"),
+		MQPassword: getEnv("MQ_PASSWORD", "guest"),
+		MQHost:     getEnv("MQ_HOST", "localhost"),
+		MQPort:     getEnv("MQ_PORT", "5672"),
 	}
 }

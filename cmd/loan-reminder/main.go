@@ -84,11 +84,30 @@ func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queu
 }
 
 func process(loans []types.Loan) {
-	conn, ch := mq.NewRabbitMQClient()
+	conn, ch, err := mq.NewRabbitMQClient(mq.MQConfig{
+		Username: config.Envs.MQUsername,
+		Password: config.Envs.MQPassword,
+		Host:     config.Envs.MQHost,
+		Port:     config.Envs.MQPort,
+	})
+
+	if err != nil {
+		log.Fatalf("error creating mq client %v", err)
+	}
 	defer conn.Close()
 	defer ch.Close()
 
-	mq.DeclareQueues(ch)
+	_, err = mq.DeclareQueue(ch, mq.QueueLoanExpired)
+
+	if err != nil {
+		log.Fatalf("error declaring queue %v", err)
+	}
+
+	_, err = mq.DeclareQueue(ch, mq.QueueLoanExpiring)
+
+	if err != nil {
+		log.Fatalf("error declaring queue %v", err)
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
