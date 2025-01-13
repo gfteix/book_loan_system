@@ -1,10 +1,8 @@
 package mq
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -14,7 +12,7 @@ const (
 	QueueLoanExpired  string = "loan-expired"
 )
 
-func setQueues(ch *amqp.Channel) {
+func DeclareQueues(ch *amqp.Channel) {
 	_, err := ch.QueueDeclare(
 		QueueLoanExpiring, // name
 		false,             // durable
@@ -38,19 +36,14 @@ func setQueues(ch *amqp.Channel) {
 	failOnError(err, fmt.Sprintf("Failed to declare %v queue", QueueLoanExpired))
 }
 
-func NewRabbitMQClient() (*amqp.Connection, *amqp.Channel, context.Context, context.CancelFunc) {
+func NewRabbitMQClient() (*amqp.Connection, *amqp.Channel) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	setQueues(ch)
-
-	return conn, ch, ctx, cancel
+	return conn, ch
 }
 
 func failOnError(err error, msg string) {

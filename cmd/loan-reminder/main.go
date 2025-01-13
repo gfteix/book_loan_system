@@ -84,11 +84,14 @@ func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queu
 }
 
 func process(loans []types.Loan) {
-	conn, ch, ctx, cancelFunc := mq.NewRabbitMQClient()
-
+	conn, ch := mq.NewRabbitMQClient()
 	defer conn.Close()
 	defer ch.Close()
-	defer cancelFunc()
+
+	mq.DeclareQueues(ch)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	for _, l := range loans {
 
