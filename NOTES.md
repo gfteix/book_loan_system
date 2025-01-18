@@ -191,3 +191,12 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4.0-man
 - Port 5672: Enables application-level communication with RabbitMQ (the main messaging functionality).
 
 - Port 15672: Allows you to monitor and manage RabbitMQ using a web browser.
+
+## Containers
+
+
+To execute the reminders process every day, it's necessary to containerizing the process, and then run the container via the host cron.
+
+`crontab -e`
+
+`0 0 * * * docker run --rm --env DATABASE_URL="?" reminder-job:latest`
