@@ -7,11 +7,6 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-const (
-	QueueLoanExpiring string = "loan-expiring"
-	QueueLoanExpired  string = "loan-expired"
-)
-
 func DeclareQueue(ch *amqp.Channel, name string) (*amqp.Queue, error) {
 	q, err := ch.QueueDeclare(
 		name,
@@ -23,7 +18,7 @@ func DeclareQueue(ch *amqp.Channel, name string) (*amqp.Queue, error) {
 	)
 
 	if err != nil {
-		fmt.Printf("failed to declare %v queue", QueueLoanExpiring)
+		fmt.Printf("failed to declare %v queue", name)
 		return nil, err
 	}
 

@@ -37,7 +37,7 @@ func main() {
 
 	qty := len(loans)
 
-	log.Printf("loan-reminder: processing %v loans", qty)
+	log.Printf("reminder: processing %v loans", qty)
 
 	if qty > 0 {
 		process(loans)
@@ -46,7 +46,7 @@ func main() {
 
 func buildPayload(loan types.Loan, eventType string) []byte {
 	payload, err := json.Marshal(types.Event{
-		Source:  "loan-reminder",
+		Source:  "cmd/reminder",
 		Time:    time.Now().UTC().Format(time.RFC3339),
 		EventId: uuid.NewString(),
 		Type:    eventType,
@@ -63,8 +63,8 @@ func buildPayload(loan types.Loan, eventType string) []byte {
 	return payload
 }
 
-func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queue string) {
-	body := buildPayload(loan, queue)
+func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queue string, eventType string) {
+	body := buildPayload(loan, eventType)
 
 	err := ch.PublishWithContext(ctx,
 		"",
@@ -80,7 +80,7 @@ func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queu
 		log.Fatalf("fail to publish message %v", err)
 	}
 
-	log.Printf("[x] Sent %s\n", body)
+	log.Printf("sent %s\n", body)
 }
 
 func process(loans []types.Loan) {
@@ -97,13 +97,7 @@ func process(loans []types.Loan) {
 	defer conn.Close()
 	defer ch.Close()
 
-	_, err = mq.DeclareQueue(ch, mq.QueueLoanExpired)
-
-	if err != nil {
-		log.Fatalf("error declaring queue %v", err)
-	}
-
-	_, err = mq.DeclareQueue(ch, mq.QueueLoanExpiring)
+	_, err = mq.DeclareQueue(ch, "LoanEvents")
 
 	if err != nil {
 		log.Fatalf("error declaring queue %v", err)
@@ -120,11 +114,11 @@ func process(loans []types.Loan) {
 		daysDiff := expiringDate.Sub(today).Hours() / 24
 
 		if daysDiff == 0 {
-			publishMessage(ch, ctx, l, mq.QueueLoanExpired)
+			publishMessage(ch, ctx, l, "LoanEvents", "LoanExpired")
 		}
 
 		if daysDiff > 0 && daysDiff <= 2 {
-			publishMessage(ch, ctx, l, mq.QueueLoanExpiring)
+			publishMessage(ch, ctx, l, "LoanEvents", "LoanExpiring")
 		}
 	}
 }

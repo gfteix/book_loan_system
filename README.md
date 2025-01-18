@@ -31,13 +31,17 @@ System Design
 
 ## TODO
 
-- Build API
-- Build loan expiring job
-- Build email handler
+- [X] Build API
+- [ ] Build loan expiring job (developing)
+- [ ] Build email handler (developing)
+- [ ] Swagger Docs
+- [ ] Integrate with Prometheus for metrics
 
 
 ---
 
 ## How to run
+
+### API
 
 `make api-run`
