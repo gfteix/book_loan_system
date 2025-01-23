@@ -17,6 +17,8 @@ import (
 )
 
 func main() {
+	log.Println("starting reminders")
+
 	db, err := db.NewPostgreSQLStorage(db.DBConfig{
 		DBHost:     config.Envs.DBHost,
 		DBPort:     config.Envs.DBPort,
@@ -37,7 +39,7 @@ func main() {
 
 	qty := len(loans)
 
-	log.Printf("reminder: processing %v loans", qty)
+	log.Printf("processing %v loans", qty)
 
 	if qty > 0 {
 		process(loans)
@@ -46,7 +48,7 @@ func main() {
 
 func buildPayload(loan types.Loan, eventType string) []byte {
 	payload, err := json.Marshal(types.Event{
-		Source:  "cmd/reminder",
+		Source:  "cmd/reminders",
 		Time:    time.Now().UTC().Format(time.RFC3339),
 		EventId: uuid.NewString(),
 		Type:    eventType,
@@ -77,7 +79,7 @@ func publishMessage(ch *amqp.Channel, ctx context.Context, loan types.Loan, queu
 		})
 
 	if err != nil {
-		log.Fatalf("fail to publish message %v", err)
+		log.Printf("fail to publish message %v", err)
 	}
 
 	log.Printf("sent %s\n", body)
@@ -124,7 +126,6 @@ func process(loans []types.Loan) {
 }
 
 // returns loans that expires today or that will expire in the next two days
-
 func getLoansToProcess(db *sql.DB) ([]types.Loan, error) {
 	rows, err := db.Query("SELECT id, expiring_date, user_id, book_item_id FROM loans WHERE return_date IS NULL AND expiring_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '2 days'")
 

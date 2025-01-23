@@ -19,6 +19,9 @@ type Config struct {
 	MQPassword string
 	MQPort     string
 	MQHost     string
+
+	SMTPHost string
+	SMTPPort string
 }
 
 var Envs = initConfig()
@@ -46,5 +49,7 @@ func initConfig() Config {
 		MQPassword: getEnv("MQ_PASSWORD", "guest"),
 		MQHost:     getEnv("MQ_HOST", "localhost"),
 		MQPort:     getEnv("MQ_PORT", "5672"),
+		SMTPHost:   getEnv("SMTP_HOST", "mailhog"),
+		SMTPPort:   getEnv("SMTP_PORT", "1025"),
 	}
 }
