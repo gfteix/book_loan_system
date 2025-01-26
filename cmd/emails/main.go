@@ -18,6 +18,12 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 )
 
+type LoanData struct {
+	Email         string
+	Expiring_date time.Time
+	BookTitle     string
+}
+
 func main() {
 	conn, ch, err := mq.NewRabbitMQClient(mq.MQConfig{
 		Username: config.Envs.MQUsername,
@@ -92,7 +98,7 @@ func processMessage(d amqp091.Delivery) {
 	d.Ack(false)
 }
 
-func getDataForEmail(loanId string) (string, time.Time, error) {
+func getDataForEmail(loanId string) (LoanData, error) {
 	db, err := db.NewPostgreSQLStorage(db.DBConfig{
 		DBHost:     config.Envs.DBHost,
 		DBPort:     config.Envs.DBPort,
@@ -101,42 +107,42 @@ func getDataForEmail(loanId string) (string, time.Time, error) {
 		DBPassword: config.Envs.DBPassword,
 	})
 	if err != nil {
-		return "", time.Time{}, err
+		return LoanData{}, err
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT u.email, l.expiring_date FROM loans l INNER JOIN users u ON l.user_id = u.id WHERE l.id = $1", loanId)
+	rows, err := db.Query("SELECT u.email, l.expiring_date, b.title FROM loans l INNER JOIN users u ON l.user_id = u.id INNER JOIN book_items bi ON bi.id = l.book_item_id INNER JOIN books b ON b.id = bi.book_id WHERE l.id = $1", loanId)
 
 	if err != nil {
-		return "", time.Time{}, err
+		return LoanData{}, err
 	}
 
 	defer rows.Close()
 
-	var email string
-	var expiring_date time.Time
+	var data LoanData
 
 	if rows.Next() {
 		err := rows.Scan(
-			&email,
-			&expiring_date,
+			&data.Email,
+			&data.Expiring_date,
+			&data.BookTitle,
 		)
 		if err != nil {
-			return "", time.Time{}, err
+			return data, err
 		}
 	}
 
-	return email, expiring_date, nil
+	return data, nil
 }
 
 func handleExpiredLoan(event types.Event) error {
-	email, expiring_date, err := getDataForEmail(event.Payload.LoanId)
+	data, err := getDataForEmail(event.Payload.LoanId)
 
 	if err != nil {
 		return err
 	}
 
-	err = sendEmail([]string{email}, "Loan Expired", fmt.Sprintf("Your book loan expired on %v", expiring_date))
+	err = sendEmail([]string{data.Email}, "Loan Expired", fmt.Sprintf("Your loan of the book %v expired on %v, please return the book to the library.", data.BookTitle, data.Expiring_date.Format("2006-01-02")))
 
 	if err != nil {
 		return err
@@ -145,13 +151,13 @@ func handleExpiredLoan(event types.Event) error {
 }
 
 func handleExpiringLoan(event types.Event) error {
-	email, expiring_date, err := getDataForEmail(event.Payload.LoanId)
+	data, err := getDataForEmail(event.Payload.LoanId)
 
 	if err != nil {
 		return err
 	}
 
-	err = sendEmail([]string{email}, "Loan Expiring", fmt.Sprintf("Your book loan will expire on %v", expiring_date))
+	err = sendEmail([]string{data.Email}, "Loan Expiring", fmt.Sprintf("Your loan of the book %v will expire on %v, please remember to return the book to the library until the expiration date.", data.BookTitle, data.Expiring_date.Format("2006-01-02")))
 
 	if err != nil {
 		return err
