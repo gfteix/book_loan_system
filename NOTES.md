@@ -75,7 +75,6 @@ CREATE TABLE loans (
 
 ```
 
-
 ---
 
 ## Requests
@@ -121,7 +120,7 @@ curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872
 curl -X POST http://localhost:8080/books/{id}/items \
 -H "Content-Type: application/json" \
 -d '{
-  "bookId": "cca29657-a87d-4300-a4b4-a3163a054872",
+  "bookId": "3471807e-1c3b-4b27-b397-8f9123e6a6f0",
   "status": "available",
   "condition":"good",
   "location": "section b"
@@ -130,7 +129,7 @@ curl -X POST http://localhost:8080/books/{id}/items \
 ```
 
 ```
-curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872/items
+curl http://localhost:8080/books/3471807e-1c3b-4b27-b397-8f9123e6a6f0/items
 ```
 
 - Create Loans
@@ -139,11 +138,11 @@ curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872/items
 curl -X POST http://localhost:8080/loans \
 -H "Content-Type: application/json" \
 -d '{
-  "userId": "528a1dbc-d391-46e3-b818-6cf78e4344d2",
+  "userId": "2b0e169b-55d9-4356-ba44-3aa23dd9b2a0",
   "status": "active",
-  "bookItemId":"15caa834-4c8b-4c75-833f-bbad805e8a3c",
-  "loanDate": "2025-01-12T15:30:00Z",
-  "expiringDate": "2025-01-14T15:30:00Z"
+  "bookItemId":"36fbab72-3a61-46f0-a211-7619bc2916c5",
+  "loanDate": "2025-01-26T15:30:00Z",
+  "expiringDate": "2025-01-27T15:30:00Z"
 }' -v
 
 ```
