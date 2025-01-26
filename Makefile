@@ -4,6 +4,18 @@ api-build:
 api-run: api-build
 	@./bin/api
 
+reminders-build:
+	@go build -o bin/reminders cmd/reminders/main.go
+
+reminders-run: reminders-build
+	@./bin/reminders
+
+emails-build:
+	@go build -o bin/emails cmd/emails/main.go
+
+emails-run: emails-build
+	@./bin/emails
+
 test:
 	@go test -v ./... -cover
 
@@ -15,9 +27,3 @@ migrate-up:
 
 migrate-down:
 	@go run cmd/migrate/main.go down
-
-reminder-build:
-	@go build -o bin/reminder cmd/loan-reminder/main.go
-
-reminder-run: reminder-build
-	@./bin/reminder
