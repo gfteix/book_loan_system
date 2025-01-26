@@ -7,6 +7,7 @@ import (
 	"net/smtp"
 	"os"
 	"os/signal"
+	"slices"
 	"sync"
 	"syscall"
 	"time"
@@ -65,8 +66,8 @@ func main() {
 	<-stopChan
 
 	log.Println("Shutting down gracefully...")
-	ch.Close() // Close RabbitMQ channel
-	wg.Wait()  // Wait for all message handlers to finish
+	ch.Close() // Stop receiving new messages
+	wg.Wait()  // Wait for all in-flight messages to be processed
 	log.Println("All workers finished")
 }
 
@@ -81,15 +82,36 @@ func processMessage(d amqp091.Delivery) {
 		log.Printf("fail to unmarshal message body %v", err)
 	}
 
-	switch body.Type {
-	case "LoanExpired":
-		err = handleExpiredLoan(body)
-	case "LoanExpiring":
-		err = handleExpiringLoan(body)
-	default:
+	validTypes := []string{"LoanExpired", "LoanExpiring"}
+
+	if !slices.Contains(validTypes, body.Type) {
 		log.Printf("Unrecognized event type: %s", body.Type)
 		return
 	}
+
+	data, err := getDataForEmail(body.Payload.LoanId)
+
+	if err != nil {
+		log.Printf("error on getDataForEmail: %v", err)
+		return
+	}
+
+	var subject string
+	var message string
+
+	switch body.Type {
+	case "LoanExpired":
+		subject = "Loan Expired"
+		message = fmt.Sprintf("Your loan of the book %v expired on %v, please return the book to the library.",
+			data.BookTitle, data.Expiring_date.Format("2006-01-02"))
+	case "LoanExpiring":
+		subject = "Loan Expiring"
+		message = fmt.Sprintf(
+			"Your loan of the book %v will expire on %v, please remember to return the book to the library until the expiration date.",
+			data.BookTitle, data.Expiring_date.Format("2006-01-02"))
+	}
+
+	err = sendEmail([]string{data.Email}, subject, message)
 
 	if err != nil {
 		log.Printf("error processing message %v", err)
@@ -133,36 +155,6 @@ func getDataForEmail(loanId string) (LoanData, error) {
 	}
 
 	return data, nil
-}
-
-func handleExpiredLoan(event types.Event) error {
-	data, err := getDataForEmail(event.Payload.LoanId)
-
-	if err != nil {
-		return err
-	}
-
-	err = sendEmail([]string{data.Email}, "Loan Expired", fmt.Sprintf("Your loan of the book %v expired on %v, please return the book to the library.", data.BookTitle, data.Expiring_date.Format("2006-01-02")))
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func handleExpiringLoan(event types.Event) error {
-	data, err := getDataForEmail(event.Payload.LoanId)
-
-	if err != nil {
-		return err
-	}
-
-	err = sendEmail([]string{data.Email}, "Loan Expiring", fmt.Sprintf("Your loan of the book %v will expire on %v, please remember to return the book to the library until the expiration date.", data.BookTitle, data.Expiring_date.Format("2006-01-02")))
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func sendEmail(to []string, subject string, body string) error {

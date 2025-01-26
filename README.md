@@ -32,11 +32,12 @@ System Design
 ## TODO
 
 - [X] Build API
-- [ ] Build loan expiring job (developing)
-- [ ] Build email handler (developing)
+- [X] Build loan expiring job
+- [X] Build email handler
 - [ ] Add Rate Limit to API
-- [ ] Add database migrations
-- [ ] Dockerfiles and Docker Compose
+- [X] Add database migrations
+- [ ] Dockerfiles
+- [ ] Docker Compose (in progress)
 - [ ] Swagger Docs
 - [ ] Integrate with Prometheus for metrics
 
@@ -45,6 +46,25 @@ System Design
 
 ## How to run
 
+- Make sure the infraestructure is up
+
+`docker compose up`
+
+
 ### API
 
 `make api-run`
+
+### Email Handler
+
+The handler will be listening to messages on the rabbitmq queue, when a new message arrives it sends an email.
+It is possible to see the emails sent on http://localhost:8025/
+
+`go run cmd/emails/main.go`
+
+### Reminder Job 
+
+It checks for existing loans that expires today or will expire in the next day and sends a message to the queue
+
+`go run cmd/reminders/main.go`
+
