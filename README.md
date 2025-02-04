@@ -34,13 +34,11 @@ System Design
 - [X] Build API
 - [X] Build loan expiring job
 - [X] Build email handler
-- [ ] Add Rate Limit to API
 - [X] Add database migrations
 - [ ] Dockerfiles
-- [ ] Docker Compose (in progress)
+- [ ] Docker Compose
 - [ ] Swagger Docs
 - [ ] Integrate with Prometheus for metrics
-
 
 ---
 
