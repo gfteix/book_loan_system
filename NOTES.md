@@ -199,3 +199,15 @@ To execute the reminders process every day, it's necessary to containerizing the
 `crontab -e`
 
 `0 0 * * * docker run --rm --env DATABASE_URL="?" reminder-job:latest`
+
+
+
+https://stackoverflow.com/questions/68473233/dockerfile-for-go-project-of-two-runnables-with-shared-packages
+
+
+
+---
+
+Docker Compose
+
+`docker compose --env-file .env build --no-cache && docker compose --env-file .env up -d --force-recreate`
