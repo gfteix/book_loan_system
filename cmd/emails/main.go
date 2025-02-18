@@ -36,8 +36,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("error creating mq client: %v", err)
 	}
+
 	defer conn.Close()
 	defer ch.Close()
+
+	log.Print("successfully connected to rabbit mq client")
 
 	_, err = mq.DeclareQueue(ch, "LoanEvents")
 	if err != nil {

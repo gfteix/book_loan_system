@@ -14,6 +14,6 @@ FROM gcr.io/distroless/base-debian10
 
 COPY --from=builder /bin/emails /bin/emails
 
-EXPOSE 8080
+EXPOSE 6060
 
 CMD ["/bin/emails"]

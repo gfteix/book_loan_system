@@ -35,10 +35,10 @@ System Design
 - [X] Build loan expiring job
 - [X] Build email handler
 - [X] Add database migrations
-- [ ] Dockerfiles
-- [ ] Docker Compose
+- [X] Dockerfiles
+- [X] Docker Compose
 - [ ] Swagger Docs
-- [ ] Integrate with Prometheus for metrics
+- [ ] Integrate with Prometheus for metrics?
 
 ---
 
