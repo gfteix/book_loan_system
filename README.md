@@ -39,7 +39,7 @@ System Design
 - [X] Docker Compose
 - [ ] Swagger Docs
 - [ ] Integrate with Prometheus for metrics?
-
+- [ ] Rename book_items to book_copies (db, code and NOTES.md)
 ---
 
 ## How to run
