@@ -211,3 +211,26 @@ https://stackoverflow.com/questions/68473233/dockerfile-for-go-project-of-two-ru
 Docker Compose
 
 `docker compose --env-file .env build --no-cache && docker compose --env-file .env up -d --force-recreate`
+
+
+-----
+
+## Running with make files:
+
+### API
+
+`make api-run`
+
+### Reminder Job 
+
+It checks for existing loans that expires today or will expire in the next 2 days and sends a message to a queue.
+
+`make emails-run`
+
+### Email Handler
+
+The handler will be listening to messages on the rabbitmq queue, when a new message arrives it sends an email to the user.
+
+It is possible to see the emails sent on http://localhost:8025/
+
+`make reminders-run`

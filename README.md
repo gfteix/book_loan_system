@@ -39,14 +39,16 @@ System Design
 - [X] Docker Compose
 - [ ] Swagger Docs
 - [ ] Integrate with Prometheus for metrics?
-- [ ] Rename book_items to book_copies (db, code and NOTES.md)
+- [ ] Rename book_items to book_copies (db, code, db diagram and NOTES.md)
 ---
 
 ## How to run
 
-- Make sure the infraestructure is up
+- Create a `.env` filed based on the `.env.example`
 
-`docker compose up`
+- build the infraestructure and execute the project by running
+
+`docker compose --env-file .env build --no-cache && docker compose --env-file .env up -d --force-recreate`
 
 
 ### API
