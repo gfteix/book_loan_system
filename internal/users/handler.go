@@ -24,6 +24,11 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /users/{id}", h.handleGetUserById)
 }
 
+// @Summary get user by id
+// @ID get-user-by-id
+// @Produce json
+// @Success 200 {object} user
+// @Router /users [get]
 func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	log.Print("handleGetUserById")
 

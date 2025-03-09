@@ -1,0 +1,14 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    name: Gabriel Teixeira
+    url: https://github.com/gfteix
+  description: API to manage book loans
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Book Loan API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

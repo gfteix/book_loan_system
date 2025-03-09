@@ -1,0 +1,19 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API to manage book loans",
+        "title": "Book Loan API",
+        "contact": {
+            "name": "Gabriel Teixeira",
+            "url": "https://github.com/gfteix"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {}
+}
