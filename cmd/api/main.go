@@ -20,13 +20,13 @@ import (
 
 	"github.com/gfteix/book_loan_system/pkg/config"
 	"github.com/gfteix/book_loan_system/pkg/db"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/gfteix/book_loan_system/internal/books"
 	"github.com/gfteix/book_loan_system/internal/loans"
 	"github.com/gfteix/book_loan_system/internal/users"
 
 	_ "github.com/gfteix/book_loan_system/docs" // Import the generated Swagger docs
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func main() {
