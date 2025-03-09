@@ -1,0 +1,80 @@
+basePath: /
+definitions:
+  types.APIError:
+    properties:
+      error:
+        type: string
+    type: object
+  types.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Gabriel Teixeira
+    url: https://github.com/gfteix
+  description: API to manage book loans
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Book Loan API
+  version: "1.0"
+paths:
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves user details by their unique ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get a user by ID
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Creates an User
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Creates an User
+      tags:
+      - users
+swagger: "2.0"

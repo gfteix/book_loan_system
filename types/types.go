@@ -103,3 +103,7 @@ type Event struct {
 	Type    string       `json:"type"`
 	Payload EventPayload `json:"payload"`
 }
+
+type APIError struct {
+	Error string `json:"error"`
+}

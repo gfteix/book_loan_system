@@ -24,11 +24,17 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /users/{id}", h.handleGetUserById)
 }
 
-// @Summary get user by id
-// @ID get-user-by-id
-// @Produce json
-// @Success 200 {object} user
-// @Router /users [get]
+// GetUser godoc
+// @Summary Get a user by ID
+// @Description Retrieves user details by their unique ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} types.User
+// @Failure 400 {object} types.APIError
+// @Failure 404 {object} types.APIError
+// @Router /users/{id} [get]
 func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	log.Print("handleGetUserById")
 
@@ -57,6 +63,16 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, user)
 }
 
+// CreateUser godoc
+// @Summary Creates an User
+// @Description Creates an User
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Failure 400 {object} types.APIError
+// @Failure 500 {object} types.APIError
+// @Router /users/{id} [post]
 func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var payload types.CreateUserPayload
 

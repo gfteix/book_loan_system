@@ -1,3 +1,15 @@
+//	@title			Book Loan API
+//	@version		1.0
+//	@description	API to manage book loans
+
+//	@contact.name	Gabriel Teixeira
+//	@contact.url	https://github.com/gfteix
+
+//	@license.name	MIT
+//	@license.url	https://opensource.org/licenses/MIT
+
+// @host						localhost:8080
+// @BasePath					/
 package main
 
 import (
@@ -12,6 +24,9 @@ import (
 	"github.com/gfteix/book_loan_system/internal/books"
 	"github.com/gfteix/book_loan_system/internal/loans"
 	"github.com/gfteix/book_loan_system/internal/users"
+
+	_ "github.com/gfteix/book_loan_system/docs" // Import the generated Swagger docs
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func main() {
@@ -47,21 +62,10 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer {
 	}
 }
 
-//	@title			Book Loan API
-//	@version		1.0
-//	@description	API to manage book loans
-
-//	@contact.name	Gabriel Teixeira
-//	@contact.url	https://github.com/gfteix
-
-//	@license.name	MIT
-//	@license.url	https://opensource.org/licenses/MIT
-
-// @host						localhost:8080
-// @BasePath					/
-// @query.collection.format	multi
 func (s *APIServer) Run() error {
 	router := http.NewServeMux()
+
+	router.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	userRepository := users.NewRepository(s.db)
 	userHandler := users.NewHandler(userRepository)
