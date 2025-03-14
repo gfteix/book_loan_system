@@ -24,6 +24,17 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /loans/{id}", h.handleGetLoanById)
 }
 
+// CreateLoan godoc
+// @Summary Creates a Loan
+// @Description Creates a book loan
+// @Tags loans
+// @Accept  json
+// @Produce  json
+// @Param user body types.CreateLoanPayload true "Loan that needs to be created"
+// @Success 200
+// @Failure 400 {object} types.APIError
+// @Failure 500 {object} types.APIError
+// @Router /loans [post]
 func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var payload types.CreateLoanPayload
@@ -53,6 +64,19 @@ func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, nil)
 }
 
+// GetLoans godoc
+// @Summary Get Loans
+// @Description Retrieves loans with optional filters
+// @Tags loans
+// @Accept  json
+// @Produce  json
+// @Param userId query string false "Filter by User ID"
+// @Param status query string false "Filter by Loan Status"
+// @Param bookItemId query string false "Filter by Book Item ID"
+// @Success 200 {array} types.Loan
+// @Failure 400 {object} types.APIError
+// @Failure 500 {object} types.APIError
+// @Router /loans [get]
 func (h *Handler) handleGetLoans(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 
@@ -62,16 +86,27 @@ func (h *Handler) handleGetLoans(w http.ResponseWriter, r *http.Request) {
 	filter["status"] = queryParams.Get("status")
 	filter["bookItemId"] = queryParams.Get("bookItemIds")
 
-	books, err := h.repository.GetLoans(filter)
+	loans, err := h.repository.GetLoans(filter)
 
 	if err != nil {
-		log.Printf("error on GetBooks %v", err)
+		log.Printf("error on handleGetLoans %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, books)
+	utils.WriteJSON(w, http.StatusOK, loans)
 }
 
+// GetLoan godoc
+// @Summary Get a Loan
+// @Description Retrieves a loan by ID
+// @Tags loans
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Loan ID"
+// @Success 200 {object} types.Loan
+// @Failure 400 {object} types.APIError
+// @Failure 500 {object} types.APIError
+// @Router /loans/{id} [get]
 func (h *Handler) handleGetLoanById(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 

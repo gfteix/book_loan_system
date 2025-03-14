@@ -5,6 +5,104 @@ definitions:
       error:
         type: string
     type: object
+  types.Book:
+    properties:
+      author:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      isbn:
+        type: string
+      numberOfPages:
+        type: integer
+      title:
+        type: string
+    type: object
+  types.BookItem:
+    properties:
+      bookId:
+        type: string
+      condition:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      location:
+        type: string
+      status:
+        type: string
+    type: object
+  types.CreateBookItemPayload:
+    properties:
+      bookId:
+        type: string
+      condition:
+        type: string
+      location:
+        type: string
+      status:
+        type: string
+    type: object
+  types.CreateBookPayload:
+    properties:
+      author:
+        type: string
+      description:
+        type: string
+      isbn:
+        type: string
+      numberOfPages:
+        type: integer
+      title:
+        type: string
+    type: object
+  types.CreateLoanPayload:
+    properties:
+      bookItemId:
+        type: string
+      expiringDate:
+        type: string
+      loanDate:
+        type: string
+      status:
+        type: string
+      userId:
+        type: string
+    type: object
+  types.CreateUserPayload:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  types.Loan:
+    properties:
+      bookItemId:
+        type: string
+      createdAt:
+        type: string
+      expiringDate:
+        type: string
+      id:
+        type: string
+      loanDate:
+        type: string
+      returnDate:
+        type: string
+      status:
+        type: string
+      userId:
+        type: string
+    type: object
   types.User:
     properties:
       createdAt:
@@ -28,6 +126,311 @@ info:
   title: Book Loan API
   version: "1.0"
 paths:
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of books with optional filters
+      parameters:
+      - description: Filter by title
+        in: query
+        name: title
+        type: string
+      - description: Filter by author
+        in: query
+        name: author
+        type: string
+      - description: Filter by ISBN
+        in: query
+        name: isbn
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Book'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get books with filters
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: Adds a new book to the library system
+      parameters:
+      - description: Book details
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateBookPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Create a new book
+      tags:
+      - books
+  /books/{bookId}/items/{itemId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a specific book item by its ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: bookId
+        required: true
+        type: string
+      - description: Book Item ID
+        in: path
+        name: itemId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.BookItem'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get a book item by ID
+      tags:
+      - books
+  /books/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a book by its ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Book'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get a book by ID
+      tags:
+      - books
+  /books/{id}/items:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all items belonging to a book by its ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.BookItem'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get items of a book
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: Adds a new book item to a book
+      parameters:
+      - description: Book item details
+        in: body
+        name: bookItem
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateBookItemPayload'
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Create a book item
+      tags:
+      - books
+  /loans:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves loans with optional filters
+      parameters:
+      - description: Filter by User ID
+        in: query
+        name: userId
+        type: string
+      - description: Filter by Loan Status
+        in: query
+        name: status
+        type: string
+      - description: Filter by Book Item ID
+        in: query
+        name: bookItemId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Loan'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get Loans
+      tags:
+      - loans
+    post:
+      consumes:
+      - application/json
+      description: Creates a book loan
+      parameters:
+      - description: Loan that needs to be created
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateLoanPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Creates a Loan
+      tags:
+      - loans
+  /loans/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a loan by ID
+      parameters:
+      - description: Loan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Loan'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get a Loan
+      tags:
+      - loans
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Creates an User
+      parameters:
+      - description: User object that needs to be created
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateUserPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Creates an User
+      tags:
+      - users
   /users/{id}:
     get:
       consumes:
@@ -55,26 +458,6 @@ paths:
           schema:
             $ref: '#/definitions/types.APIError'
       summary: Get a user by ID
-      tags:
-      - users
-    post:
-      consumes:
-      - application/json
-      description: Creates an User
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.APIError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.APIError'
-      summary: Creates an User
       tags:
       - users
 swagger: "2.0"

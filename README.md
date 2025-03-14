@@ -51,6 +51,12 @@ System Design
 `docker compose --env-file .env build --no-cache && docker compose --env-file .env up -d --force-recreate`
 
 
+## Docs 
+After executing the api, you can access the docs at http://localhost:8080/swagger/index.html
+
+You can also see the latest html doc manually without running the project by going to [docs/index.html](docs/index.html)
+
+
 
 
 ## API

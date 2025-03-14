@@ -69,10 +69,11 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 // @Tags users
 // @Accept  json
 // @Produce  json
+// @Param user body types.CreateUserPayload true "User object that needs to be created"
 // @Success 200
 // @Failure 400 {object} types.APIError
 // @Failure 500 {object} types.APIError
-// @Router /users/{id} [post]
+// @Router /users [post]
 func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var payload types.CreateUserPayload
 

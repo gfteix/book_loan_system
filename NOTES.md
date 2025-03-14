@@ -234,3 +234,15 @@ The handler will be listening to messages on the rabbitmq queue, when a new mess
 It is possible to see the emails sent on http://localhost:8025/
 
 `make reminders-run`
+
+
+
+----
+
+Documentation
+
+- go install github.com/swaggo/swag/cmd/swag@latest
+- export PATH=$(go env GOPATH)/bin:$PATH
+- swag version
+- swag init -g cmd/api/main.go
+- make api-run
