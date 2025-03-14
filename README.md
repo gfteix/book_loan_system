@@ -1,33 +1,28 @@
-
 # Book Loan System
 
-Backend System to manage book loans.
+A backend system to manage book loans.
 
-## Functionalities
+## Features
 
-- Create user
-- Get user
-- Get users
-- Get List of Books (with filters)
-- Get Book details
-- Get Book item details
-- Lend a book (item)
-- Return a book (item)
-- Send email to client when loan is about to expire
+- Create, retrieve, and list users
+- Retrieve books with filters
+- Retrieve book details and book item details
+- Lend and return book items
+- Notify users via email when a loan is about to expire
 
-Database Diagram
+## System Overview
 
-![database modeling](book_loan_system-DB.drawio.png "Title")
+### Database Diagram
+![Database Modeling](book_loan_system-DB.drawio.png "Database Schema")
 
-System Design
+### System Design
+![System Design](book_loan_system-system_design.drawio.png "System Architecture")
 
-![system design](book_loan_system-system_design.drawio.png "Title")
+## Technologies Used
 
-## Technologies
-
-- Go
-- Docker
-- RabbitMQ
+- **Go** - Backend development
+- **Docker** - Containerization
+- **RabbitMQ** - Message queuing
 
 ## TODO
 
@@ -42,107 +37,107 @@ System Design
 - [ ] Rename book_items to book_copies (db, code, db diagram and NOTES.md)
 ---
 
-## How to run
 
-- Create a `.env` filed based on the `.env.example`
+## Getting Started
 
-- build the infraestructure and execute the project by running
+### Setup and Run
 
-`docker compose --env-file .env build --no-cache && docker compose --env-file .env up -d --force-recreate`
+1. Create a `.env` file based on `.env.example`.
+2. Build and start the infrastructure:
 
-
-## Docs 
-After executing the api, you can access the docs at http://localhost:8080/swagger/index.html
-
-You can also see the latest html doc manually without running the project by going to [docs/index.html](docs/index.html)
+   ```sh
+   docker compose --env-file .env build --no-cache && docker compose --env-file .env up -d --force-recreate
+   ```
 
 
+### API Documentation
 
+Once the API is running, you can access the Swagger docs at:
 
-## API
+[http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
+Alternatively, you can open the HTML documentation manually from the `docs/` folder in a browser.
 
-- To create an user
-```
+## API Endpoints
+
+### User Management
+
+#### Create a User
+```sh
 curl -X POST http://localhost:8080/users \
 -H "Content-Type: application/json" \
 -d '{
   "name": "John",
   "email": "john@example.com"
 }' -v
-
 ```
 
-- To get an user
-```
+#### Get a User by ID
+```sh
 curl http://localhost:8080/users/{id}
 ```
 
-- To create a book
+### Book Management
 
-```
-
+#### Create a Book
+```sh
 curl -X POST http://localhost:8080/books \
 -H "Content-Type: application/json" \
 -d '{
-  "title": "title",
-  "description": "some description",
-  "isbn": "1",
-  "author": "author",
-  "numberOfPages": 100
+  "title": "Book Title",
+  "description": "A detailed description",
+  "isbn": "123456789",
+  "author": "Author Name",
+  "numberOfPages": 250
 }' -v
-
 ```
 
-- To search a book by title
-
-```
-curl "http://localhost:8080/books?title=sometitle"
-```
-
-- To get a book by ID
-
-```
-curl http://localhost:8080/books/cca29657-a87d-4300-a4b4-a3163a054872
+#### Search Books by Title
+```sh
+curl "http://localhost:8080/books?title=example"
 ```
 
-- To create a book item
-
+#### Get a Book by ID
+```sh
+curl http://localhost:8080/books/{book_id}
 ```
-curl -X POST http://localhost:8080/books/{id}/items \
+
+### Book Item Management
+
+#### Create a Book Item
+```sh
+curl -X POST http://localhost:8080/books/{book_id}/items \
 -H "Content-Type: application/json" \
 -d '{
-  "bookId": "3471807e-1c3b-4b27-b397-8f9123e6a6f0",
+  "bookId": "book_uuid",
   "status": "available",
-  "condition":"good",
-  "location": "section b"
+  "condition": "good",
+  "location": "Section B"
 }' -v
-
 ```
 
-- To get book items of a book
-
+#### Get Book Items for a Book
+```sh
+curl http://localhost:8080/books/{book_id}/items
 ```
-curl http://localhost:8080/books/3471807e-1c3b-4b27-b397-8f9123e6a6f0/items
-```
 
-- To create a loan
+### Loan Management
 
-```
+#### Create a Loan
+```sh
 curl -X POST http://localhost:8080/loans \
 -H "Content-Type: application/json" \
 -d '{
-  "userId": "2b0e169b-55d9-4356-ba44-3aa23dd9b2a0",
+  "userId": "user_uuid",
   "status": "active",
-  "bookItemId":"36fbab72-3a61-46f0-a211-7619bc2916c5",
+  "bookItemId": "book_item_uuid",
   "loanDate": "2025-01-26T15:30:00Z",
   "expiringDate": "2025-01-27T15:30:00Z"
 }' -v
-
 ```
 
-- To Get Loans
+#### Get Loans by User ID
+```sh
+curl "http://localhost:8080/loans?userId={user_id}"
+```
 
-```
-curl "http://localhost:8080/loans?userId={id}"
-```
