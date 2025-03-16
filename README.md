@@ -32,9 +32,9 @@ A backend system to manage book loans.
 - [X] Add database migrations
 - [X] Dockerfiles
 - [X] Docker Compose
-- [ ] Swagger Docs
-- [ ] Integrate with Prometheus for metrics?
+- [X] Swagger Docs
 - [ ] Rename book_items to book_copies (db, code, db diagram and NOTES.md)
+- [ ] Integrate with Prometheus for metrics?
 ---
 
 
