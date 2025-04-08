@@ -246,3 +246,4 @@ Documentation
 - swag -v
 - swag init -g cmd/api/main.go
 - make api-run
+- to generate beautiful docs from yaml file: https://github.com/Redocly/redocly-cli
