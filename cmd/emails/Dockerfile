@@ -1,10 +1,10 @@
-FROM golang:1.22.2 AS builder
+FROM golang:1.23.0 AS builder
 
 WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod download && go mod verify
+RUN go mod download && go mod verify || (echo "Go mod failed" && cat go.sum && exit 1)
 
 COPY . .
 
