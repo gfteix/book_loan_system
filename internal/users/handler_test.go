@@ -14,6 +14,7 @@ import (
 
 type mockUserRepository struct {
 	GetUserByEmailFunc func(email string) (*types.User, error)
+	GetUsersFunc       func() ([]types.User, error)
 	GetUserByIdFunc    func(id string) (*types.User, error)
 	CreateUserFunc     func(user types.User) error
 }
@@ -282,6 +283,75 @@ func TestGetUserByIdHandler(t *testing.T) {
 			t.Errorf("expected status code %d, got %d", http.StatusOK, rr.Code)
 		}
 	})
+}
+
+func TestGetUsersHandler(t *testing.T) {
+	t.Run("should return 500 if repository fails on GetUsers", func(t *testing.T) {
+		userRepository := &mockUserRepository{
+			GetUsersFunc: func() ([]types.User, error) {
+				return nil, fmt.Errorf("database error")
+			},
+		}
+
+		handler := NewHandler(userRepository)
+
+		rr := httptest.NewRecorder()
+		router := http.NewServeMux()
+
+		router.HandleFunc("/users", handler.handleGetUsers)
+
+		req, err := http.NewRequest(http.MethodGet, "/users", nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d, got %d", http.StatusInternalServerError, rr.Code)
+		}
+	})
+
+	t.Run("should retrieve users successfully", func(t *testing.T) {
+		userRepository := &mockUserRepository{
+			GetUsersFunc: func() ([]types.User, error) {
+				return []types.User{
+					{
+						Id:    "Id",
+						Name:  "Test User",
+						Email: "test@example.com",
+					},
+				}, nil
+			},
+		}
+
+		handler := NewHandler(userRepository)
+
+		rr := httptest.NewRecorder()
+		router := http.NewServeMux()
+
+		router.HandleFunc("/users", handler.handleGetUsers)
+
+		req, err := http.NewRequest(http.MethodGet, "/users", nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusOK {
+			t.Errorf("expected status code %d, got %d", http.StatusOK, rr.Code)
+		}
+	})
+}
+
+func (m *mockUserRepository) GetUsers() ([]types.User, error) {
+	if m.GetUsersFunc != nil {
+		return m.GetUsersFunc()
+	}
+	return nil, nil
 }
 
 func (m *mockUserRepository) GetUserByEmail(email string) (*types.User, error) {

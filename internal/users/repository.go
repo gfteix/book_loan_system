@@ -101,3 +101,29 @@ func (r *Repository) GetUserByEmail(email string) (*types.User, error) {
 
 	return u, nil
 }
+
+func (r *Repository) GetUsers() ([]types.User, error) {
+	rows, err := r.db.Query("SELECT id, name, email, created_at FROM users")
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	users := make([]types.User, 0)
+
+	u := new(types.User)
+
+	for rows.Next() {
+		u, err = scanRowIntoUser(rows)
+
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, *u)
+
+	}
+
+	return users, nil
+}

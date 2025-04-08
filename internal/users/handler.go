@@ -21,6 +21,7 @@ func NewHandler(repository types.UserRepository) *Handler {
 
 func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("POST /users", h.handleCreateUser)
+	router.HandleFunc("GET /users", h.handleGetUsers)
 	router.HandleFunc("GET /users/{id}", h.handleGetUserById)
 }
 
@@ -61,6 +62,30 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, user)
+}
+
+// GetUsers godoc
+// @Summary Get users
+// @Description Retrieves users
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} types.User
+// @Failure 400 {object} types.APIError
+// @Failure 404 {object} types.APIError
+// @Router /users/ [get]
+func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
+	log.Print("handleGetUsers")
+
+	users, err := h.repository.GetUsers()
+
+	if err != nil {
+		log.Printf("error on handleGetUsers %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, users)
 }
 
 // CreateUser godoc

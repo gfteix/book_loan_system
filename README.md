@@ -72,6 +72,12 @@ curl -X POST http://localhost:8080/users \
 }' -v
 ```
 
+
+#### Get Users
+```sh
+curl "http://localhost:8080/users"
+```
+
 #### Get a User by ID
 ```sh
 curl http://localhost:8080/users/{id}

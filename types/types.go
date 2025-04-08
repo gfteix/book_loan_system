@@ -43,6 +43,7 @@ type Loan struct {
 }
 
 type UserRepository interface {
+	GetUsers() ([]User, error)
 	GetUserById(id string) (*User, error)
 	GetUserByEmail(id string) (*User, error)
 	CreateUser(user User) error
