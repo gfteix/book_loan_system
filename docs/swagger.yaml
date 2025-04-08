@@ -431,6 +431,27 @@ paths:
       summary: Creates an User
       tags:
       - users
+  /users/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIError'
+      summary: Get users
+      tags:
+      - users
   /users/{id}:
     get:
       consumes:

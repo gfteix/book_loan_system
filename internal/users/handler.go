@@ -72,7 +72,6 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Success 200 {array} types.User
 // @Failure 400 {object} types.APIError
-// @Failure 404 {object} types.APIError
 // @Router /users/ [get]
 func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
 	log.Print("handleGetUsers")

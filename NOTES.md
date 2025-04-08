@@ -243,6 +243,6 @@ Documentation
 
 - go install github.com/swaggo/swag/cmd/swag@latest
 - export PATH=$(go env GOPATH)/bin:$PATH
-- swag version
+- swag -v
 - swag init -g cmd/api/main.go
 - make api-run
