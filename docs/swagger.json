@@ -142,7 +142,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.BookItem"
+                            "$ref": "#/definitions/types.BookCopy"
                         }
                     },
                     "404": {
@@ -232,7 +232,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.BookItem"
+                                "$ref": "#/definitions/types.BookCopy"
                             }
                         }
                     },
@@ -259,11 +259,11 @@
                 "parameters": [
                     {
                         "description": "Book item details",
-                        "name": "bookItem",
+                        "name": "bookCopy",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateBookItemPayload"
+                            "$ref": "#/definitions/types.CreateBookCopyPayload"
                         }
                     },
                     {
@@ -322,7 +322,7 @@
                     {
                         "type": "string",
                         "description": "Filter by Book Item ID",
-                        "name": "bookItemId",
+                        "name": "bookCopyId",
                         "in": "query"
                     }
                 ],
@@ -559,7 +559,7 @@
                 }
             }
         },
-        "types.BookItem": {
+        "types.BookCopy": {
             "type": "object",
             "properties": {
                 "bookId": {
@@ -582,7 +582,7 @@
                 }
             }
         },
-        "types.CreateBookItemPayload": {
+        "types.CreateBookCopyPayload": {
             "type": "object",
             "properties": {
                 "bookId": {
@@ -622,7 +622,7 @@
         "types.CreateLoanPayload": {
             "type": "object",
             "properties": {
-                "bookItemId": {
+                "bookCopyId": {
                     "type": "string"
                 },
                 "expiringDate": {
@@ -657,7 +657,7 @@
         "types.Loan": {
             "type": "object",
             "properties": {
-                "bookItemId": {
+                "bookCopyId": {
                     "type": "string"
                 },
                 "createdAt": {

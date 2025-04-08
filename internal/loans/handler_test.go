@@ -76,7 +76,7 @@ func TestLoanHandler(t *testing.T) {
 
 		payload := types.CreateLoanPayload{
 			UserId:       "user-123",
-			BookItemId:   "item-456",
+			BookCopyId:   "item-456",
 			Status:       "Borrowed",
 			ExpiringDate: expiringDate,
 			LoanDate:     loanDate,
@@ -123,8 +123,8 @@ func TestLoanHandler(t *testing.T) {
 	t.Run("should fetch all loans successfully", func(t *testing.T) {
 		repository.GetLoansFunc = func(filter map[string]string) ([]types.Loan, error) {
 			return []types.Loan{
-				{UserId: "user-1", BookItemId: "item-1", Status: "Borrowed"},
-				{UserId: "user-2", BookItemId: "item-2", Status: "Returned"},
+				{UserId: "user-1", BookCopyId: "item-1", Status: "Borrowed"},
+				{UserId: "user-2", BookCopyId: "item-2", Status: "Returned"},
 			}, nil
 		}
 
@@ -153,7 +153,7 @@ func TestLoanHandler(t *testing.T) {
 		repository.GetLoansFunc = func(filter map[string]string) ([]types.Loan, error) {
 			gotValue = filter[filterKey]
 			return []types.Loan{
-				{UserId: "user-1", BookItemId: "item-1", Status: "Borrowed"},
+				{UserId: "user-1", BookCopyId: "item-1", Status: "Borrowed"},
 			}, nil
 		}
 

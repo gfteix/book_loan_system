@@ -49,7 +49,7 @@ func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
 
 	err = h.repository.CreateLoan(ctx, types.Loan{
 		UserId:       payload.UserId,
-		BookItemId:   payload.BookItemId,
+		BookCopyId:   payload.BookCopyId,
 		Status:       payload.Status,
 		ExpiringDate: payload.ExpiringDate,
 		LoanDate:     payload.LoanDate,
@@ -72,7 +72,7 @@ func (h *Handler) handleCreateLoan(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param userId query string false "Filter by User ID"
 // @Param status query string false "Filter by Loan Status"
-// @Param bookItemId query string false "Filter by Book Item ID"
+// @Param bookCopyId query string false "Filter by Book Item ID"
 // @Success 200 {array} types.Loan
 // @Failure 400 {object} types.APIError
 // @Failure 500 {object} types.APIError
@@ -84,7 +84,7 @@ func (h *Handler) handleGetLoans(w http.ResponseWriter, r *http.Request) {
 
 	filter["userId"] = queryParams.Get("userId")
 	filter["status"] = queryParams.Get("status")
-	filter["bookItemId"] = queryParams.Get("bookItemIds")
+	filter["bookCopyId"] = queryParams.Get("bookCopyId")
 
 	loans, err := h.repository.GetLoans(filter)
 

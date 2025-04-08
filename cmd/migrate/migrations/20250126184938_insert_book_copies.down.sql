@@ -1,0 +1,1 @@
+DELETE FROM book_copies WHERE location = 'Shelf A';

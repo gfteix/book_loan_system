@@ -35,21 +35,21 @@ func scanRowIntoBook(rows *sql.Rows) (*types.Book, error) {
 	return book, nil
 }
 
-func scanRowIntoBookItem(rows *sql.Rows) (*types.BookItem, error) {
-	bookItem := new(types.BookItem)
+func scanRowIntoBookCopy(rows *sql.Rows) (*types.BookCopy, error) {
+	bookCopy := new(types.BookCopy)
 	err := rows.Scan(
-		&bookItem.Id,
-		&bookItem.BookId,
-		&bookItem.Status,
-		&bookItem.Location,
-		&bookItem.Condition,
-		&bookItem.CreatedAt,
+		&bookCopy.Id,
+		&bookCopy.BookId,
+		&bookCopy.Status,
+		&bookCopy.Location,
+		&bookCopy.Condition,
+		&bookCopy.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return bookItem, nil
+	return bookCopy, nil
 }
 
 func (r *Repository) GetBookById(id string) (*types.Book, error) {
@@ -128,34 +128,34 @@ func (r *Repository) GetBooks(filters map[string]string) ([]types.Book, error) {
 	return books, nil
 }
 
-func (r *Repository) GetBookItemsByBookId(id string) ([]types.BookItem, error) {
-	rows, err := r.db.Query("SELECT id, book_id, status, location, condition, created_at FROM book_items WHERE book_id = $1", id)
+func (r *Repository) GetBookCopiesByBookId(id string) ([]types.BookCopy, error) {
+	rows, err := r.db.Query("SELECT id, book_id, status, location, condition, created_at FROM book_copies WHERE book_id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var bookItems []types.BookItem
+	var bookCopies []types.BookCopy
 	for rows.Next() {
-		bookItem, err := scanRowIntoBookItem(rows)
+		bookCopy, err := scanRowIntoBookCopy(rows)
 		if err != nil {
 			return nil, err
 		}
-		bookItems = append(bookItems, *bookItem)
+		bookCopies = append(bookCopies, *bookCopy)
 	}
 
-	return bookItems, nil
+	return bookCopies, nil
 }
 
-func (r *Repository) GetBookItemById(id string) (*types.BookItem, error) {
-	rows, err := r.db.Query("SELECT id, book_id, status, location, condition, created_at FROM book_items WHERE id = $1", id)
+func (r *Repository) GetBookCopyById(id string) (*types.BookCopy, error) {
+	rows, err := r.db.Query("SELECT id, book_id, status, location, condition, created_at FROM book_copies WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	if rows.Next() {
-		return scanRowIntoBookItem(rows)
+		return scanRowIntoBookCopy(rows)
 	}
 
 	return nil, nil
@@ -172,10 +172,10 @@ func (r *Repository) CreateBook(book types.Book) error {
 	return nil
 }
 
-func (r *Repository) CreateBookItem(bookItem types.BookItem) error {
+func (r *Repository) CreateBookCopy(bookCopy types.BookCopy) error {
 	id := uuid.NewString()
-	_, err := r.db.Exec("INSERT INTO book_items (id, book_id, status, location, condition) VALUES ($1, $2, $3, $4, $5)",
-		id, bookItem.BookId, bookItem.Status, bookItem.Location, bookItem.Condition)
+	_, err := r.db.Exec("INSERT INTO book_copies (id, book_id, status, location, condition) VALUES ($1, $2, $3, $4, $5)",
+		id, bookCopy.BookId, bookCopy.Status, bookCopy.Location, bookCopy.Condition)
 	if err != nil {
 		return err
 	}

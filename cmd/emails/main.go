@@ -136,7 +136,7 @@ func getDataForEmail(loanId string) (LoanData, error) {
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT u.email, l.expiring_date, b.title FROM loans l INNER JOIN users u ON l.user_id = u.id INNER JOIN book_items bi ON bi.id = l.book_item_id INNER JOIN books b ON b.id = bi.book_id WHERE l.id = $1", loanId)
+	rows, err := db.Query("SELECT u.email, l.expiring_date, b.title FROM loans l INNER JOIN users u ON l.user_id = u.id INNER JOIN book_copies bi ON bi.id = l.book_item_id INNER JOIN books b ON b.id = bi.book_id WHERE l.id = $1", loanId)
 
 	if err != nil {
 		return LoanData{}, err

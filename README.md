@@ -33,7 +33,7 @@ A backend system to manage book loans.
 - [X] Dockerfiles
 - [X] Docker Compose
 - [X] Swagger Docs
-- [ ] Rename book_items to book_copies (db, code, db diagram and NOTES.md)
+- [X] Rename book_copies to book_copies (db, code, db diagram and NOTES.md)
 - [ ] Integrate with Prometheus for metrics?
 ---
 
@@ -130,7 +130,7 @@ curl -X POST http://localhost:8080/loans \
 -d '{
   "userId": "user_uuid",
   "status": "active",
-  "bookItemId": "book_item_uuid",
+  "bookCopyId": "book_item_uuid",
   "loanDate": "2025-01-26T15:30:00Z",
   "expiringDate": "2025-01-27T15:30:00Z"
 }' -v

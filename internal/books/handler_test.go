@@ -12,12 +12,12 @@ import (
 )
 
 type mockBookRepository struct {
-	GetBookByIdFunc          func(id string) (*types.Book, error)
-	GetBooksFunc             func(filter map[string]string) ([]types.Book, error)
-	CreateBookFunc           func(book types.Book) error
-	CreateBookItemFunc       func(bookItem types.BookItem) error
-	GetBookItemsByBookIdFunc func(bookId string) ([]types.BookItem, error)
-	GetBookItemByIdFunc      func(itemId string) (*types.BookItem, error)
+	GetBookByIdFunc           func(id string) (*types.Book, error)
+	GetBooksFunc              func(filter map[string]string) ([]types.Book, error)
+	CreateBookFunc            func(book types.Book) error
+	CreateBookCopyFunc        func(bookCopy types.BookCopy) error
+	GetBookCopiesByBookIdFunc func(bookId string) ([]types.BookCopy, error)
+	GetBookCopyByIdFunc       func(itemId string) (*types.BookCopy, error)
 }
 
 func (m *mockBookRepository) GetBookById(id string) (*types.Book, error) {
@@ -41,23 +41,23 @@ func (m *mockBookRepository) CreateBook(book types.Book) error {
 	return nil
 }
 
-func (m *mockBookRepository) CreateBookItem(bookItem types.BookItem) error {
-	if m.CreateBookItemFunc != nil {
-		return m.CreateBookItemFunc(bookItem)
+func (m *mockBookRepository) CreateBookCopy(bookCopy types.BookCopy) error {
+	if m.CreateBookCopyFunc != nil {
+		return m.CreateBookCopyFunc(bookCopy)
 	}
 	return nil
 }
 
-func (m *mockBookRepository) GetBookItemsByBookId(bookId string) ([]types.BookItem, error) {
-	if m.GetBookItemsByBookIdFunc != nil {
-		return m.GetBookItemsByBookIdFunc(bookId)
+func (m *mockBookRepository) GetBookCopiesByBookId(bookId string) ([]types.BookCopy, error) {
+	if m.GetBookCopiesByBookIdFunc != nil {
+		return m.GetBookCopiesByBookIdFunc(bookId)
 	}
 	return nil, nil
 }
 
-func (m *mockBookRepository) GetBookItemById(itemId string) (*types.BookItem, error) {
-	if m.GetBookItemByIdFunc != nil {
-		return m.GetBookItemByIdFunc(itemId)
+func (m *mockBookRepository) GetBookCopyById(itemId string) (*types.BookCopy, error) {
+	if m.GetBookCopyByIdFunc != nil {
+		return m.GetBookCopyByIdFunc(itemId)
 	}
 	return nil, nil
 }
@@ -201,7 +201,7 @@ func TestBookHandler(t *testing.T) {
 	})
 
 	t.Run("should fail to create book item with invalid book ID", func(t *testing.T) {
-		payload := types.CreateBookItemPayload{
+		payload := types.CreateBookCopyPayload{
 			BookId:    "invalid-id",
 			Status:    "Available",
 			Location:  "Library",
@@ -211,7 +211,7 @@ func TestBookHandler(t *testing.T) {
 		marshalled, _ := json.Marshal(payload)
 		rr := httptest.NewRecorder()
 		router := http.NewServeMux()
-		router.HandleFunc("/books/{id}/items", handler.handleCreateBookItem)
+		router.HandleFunc("/books/{id}/items", handler.handleCreateBookCopy)
 
 		req, err := http.NewRequest(http.MethodPost, "/books/invalid-id/items", bytes.NewBuffer(marshalled))
 		if err != nil {
@@ -226,15 +226,15 @@ func TestBookHandler(t *testing.T) {
 	})
 
 	t.Run("should fetch book items successfully", func(t *testing.T) {
-		repository.GetBookItemsByBookIdFunc = func(bookId string) ([]types.BookItem, error) {
-			return []types.BookItem{
+		repository.GetBookCopiesByBookIdFunc = func(bookId string) ([]types.BookCopy, error) {
+			return []types.BookCopy{
 				{BookId: "book-id", Status: "Available", Location: "Library"},
 			}, nil
 		}
 
 		rr := httptest.NewRecorder()
 		router := http.NewServeMux()
-		router.HandleFunc("/books/{id}/items", handler.handleGetBookItems)
+		router.HandleFunc("/books/{id}/items", handler.handleGetBookCopies)
 
 		req, err := http.NewRequest(http.MethodGet, "/books/book-id/items", nil)
 		if err != nil {

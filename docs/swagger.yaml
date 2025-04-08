@@ -22,7 +22,7 @@ definitions:
       title:
         type: string
     type: object
-  types.BookItem:
+  types.BookCopy:
     properties:
       bookId:
         type: string
@@ -37,7 +37,7 @@ definitions:
       status:
         type: string
     type: object
-  types.CreateBookItemPayload:
+  types.CreateBookCopyPayload:
     properties:
       bookId:
         type: string
@@ -63,7 +63,7 @@ definitions:
     type: object
   types.CreateLoanPayload:
     properties:
-      bookItemId:
+      bookCopyId:
         type: string
       expiringDate:
         type: string
@@ -86,7 +86,7 @@ definitions:
     type: object
   types.Loan:
     properties:
-      bookItemId:
+      bookCopyId:
         type: string
       createdAt:
         type: string
@@ -209,7 +209,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.BookItem'
+            $ref: '#/definitions/types.BookCopy'
         "404":
           description: Not Found
           schema:
@@ -268,7 +268,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/types.BookItem'
+              $ref: '#/definitions/types.BookCopy'
             type: array
         "500":
           description: Internal Server Error
@@ -284,10 +284,10 @@ paths:
       parameters:
       - description: Book item details
         in: body
-        name: bookItem
+        name: bookCopy
         required: true
         schema:
-          $ref: '#/definitions/types.CreateBookItemPayload'
+          $ref: '#/definitions/types.CreateBookCopyPayload'
       - description: Book ID
         in: path
         name: id
@@ -325,7 +325,7 @@ paths:
         type: string
       - description: Filter by Book Item ID
         in: query
-        name: bookItemId
+        name: bookCopyId
         type: string
       produces:
       - application/json

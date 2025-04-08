@@ -48,7 +48,7 @@ CREATE TABLE books (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE book_items (
+CREATE TABLE book_copies (
     id UUID PRIMARY KEY,
     book_id UUID NOT NULL,
     location TEXT NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE loans (
     return_date TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_book_item_id FOREIGN KEY(book_item_id) REFERENCES book_items(id) ON DELETE CASCADE,
+    CONSTRAINT fk_book_item_id FOREIGN KEY(book_item_id) REFERENCES book_copies(id) ON DELETE CASCADE,
     CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -140,7 +140,7 @@ curl -X POST http://localhost:8080/loans \
 -d '{
   "userId": "2b0e169b-55d9-4356-ba44-3aa23dd9b2a0",
   "status": "active",
-  "bookItemId":"36fbab72-3a61-46f0-a211-7619bc2916c5",
+  "bookCopyId":"36fbab72-3a61-46f0-a211-7619bc2916c5",
   "loanDate": "2025-01-26T15:30:00Z",
   "expiringDate": "2025-01-27T15:30:00Z"
 }' -v

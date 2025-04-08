@@ -148,7 +148,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.BookItem"
+                            "$ref": "#/definitions/types.BookCopy"
                         }
                     },
                     "404": {
@@ -238,7 +238,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.BookItem"
+                                "$ref": "#/definitions/types.BookCopy"
                             }
                         }
                     },
@@ -265,11 +265,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Book item details",
-                        "name": "bookItem",
+                        "name": "bookCopy",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateBookItemPayload"
+                            "$ref": "#/definitions/types.CreateBookCopyPayload"
                         }
                     },
                     {
@@ -328,7 +328,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Filter by Book Item ID",
-                        "name": "bookItemId",
+                        "name": "bookCopyId",
                         "in": "query"
                     }
                 ],
@@ -565,7 +565,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.BookItem": {
+        "types.BookCopy": {
             "type": "object",
             "properties": {
                 "bookId": {
@@ -588,7 +588,7 @@ const docTemplate = `{
                 }
             }
         },
-        "types.CreateBookItemPayload": {
+        "types.CreateBookCopyPayload": {
             "type": "object",
             "properties": {
                 "bookId": {
@@ -628,7 +628,7 @@ const docTemplate = `{
         "types.CreateLoanPayload": {
             "type": "object",
             "properties": {
-                "bookItemId": {
+                "bookCopyId": {
                     "type": "string"
                 },
                 "expiringDate": {
@@ -663,7 +663,7 @@ const docTemplate = `{
         "types.Loan": {
             "type": "object",
             "properties": {
-                "bookItemId": {
+                "bookCopyId": {
                     "type": "string"
                 },
                 "createdAt": {

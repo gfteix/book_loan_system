@@ -22,7 +22,7 @@ type Book struct {
 	CreatedAt     time.Time `json:"createdAt"`
 }
 
-type BookItem struct {
+type BookCopy struct {
 	Id        string    `json:"id"`
 	BookId    string    `json:"bookId"`
 	Location  string    `json:"location"`
@@ -34,7 +34,7 @@ type BookItem struct {
 type Loan struct {
 	Id           string     `json:"id"`
 	UserId       string     `json:"userId"`
-	BookItemId   string     `json:"bookItemId"`
+	BookCopyId   string     `json:"bookCopyId"`
 	Status       string     `json:"status"`
 	ExpiringDate time.Time  `json:"expiringDate"`
 	ReturnDate   *time.Time `json:"returnDate,omitempty"`
@@ -51,10 +51,10 @@ type UserRepository interface {
 type BookRepository interface {
 	GetBookById(id string) (*Book, error)
 	GetBooks(filter map[string]string) ([]Book, error)
-	GetBookItemsByBookId(id string) ([]BookItem, error)
-	GetBookItemById(id string) (*BookItem, error)
+	GetBookCopiesByBookId(id string) ([]BookCopy, error)
+	GetBookCopyById(id string) (*BookCopy, error)
 	CreateBook(book Book) error
-	CreateBookItem(bookItem BookItem) error
+	CreateBookCopy(bookCopy BookCopy) error
 }
 
 type LoanRepository interface {
@@ -76,7 +76,7 @@ type CreateBookPayload struct {
 	NumberOfPages int    `json:"numberOfPages"`
 }
 
-type CreateBookItemPayload struct {
+type CreateBookCopyPayload struct {
 	BookId    string `json:"bookId"`
 	Status    string `json:"status"`
 	Condition string `json:"condition"`
@@ -85,7 +85,7 @@ type CreateBookItemPayload struct {
 
 type CreateLoanPayload struct {
 	UserId       string    `json:"userId"`
-	BookItemId   string    `json:"bookItemId"`
+	BookCopyId   string    `json:"bookCopyId"`
 	Status       string    `json:"status"`
 	ExpiringDate time.Time `json:"expiringDate"`
 	LoanDate     time.Time `json:"loanDate"`

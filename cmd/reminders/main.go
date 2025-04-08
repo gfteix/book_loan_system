@@ -142,7 +142,7 @@ func getLoansToProcess(db *sql.DB) ([]types.Loan, error) {
 			&loan.Id,
 			&loan.ExpiringDate,
 			&loan.UserId,
-			&loan.BookItemId,
+			&loan.BookCopyId,
 		)
 
 		if err != nil {

@@ -23,8 +23,8 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("POST /books", h.handleCreateBook)
 	router.HandleFunc("GET /books", h.handleGetBooks)
 	router.HandleFunc("GET /books/{id}", h.handleGetBookById)
-	router.HandleFunc("POST /books/{id}/items", h.handleCreateBookItem)
-	router.HandleFunc("GET /books/{id}/items", h.handleGetBookItems)
+	router.HandleFunc("POST /books/{id}/items", h.handleCreateBookCopy)
+	router.HandleFunc("GET /books/{id}/items", h.handleGetBookCopies)
 
 }
 
@@ -128,21 +128,21 @@ func (h *Handler) handleCreateBook(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, nil)
 }
 
-// handleCreateBookItem godoc
+// handleCreateBookCopy godoc
 // @Summary Create a book item
 // @Description Adds a new book item to a book
 // @Tags books
 // @Accept  json
 // @Produce  json
-// @Param bookItem body types.CreateBookItemPayload true "Book item details"
+// @Param bookCopy body types.CreateBookCopyPayload true "Book item details"
 // @Param id path string true "Book ID"
 // @Success 201
 // @Failure 400 {object} types.APIError
 // @Failure 500 {object} types.APIError
 // @Router /books/{id}/items [post]
-func (h *Handler) handleCreateBookItem(w http.ResponseWriter, r *http.Request) {
-	log.Print("handleCreateBookItem")
-	var payload types.CreateBookItemPayload
+func (h *Handler) handleCreateBookCopy(w http.ResponseWriter, r *http.Request) {
+	log.Print("handleCreateBookCopy")
+	var payload types.CreateBookCopyPayload
 
 	err := utils.ParseJson(r, &payload)
 	if err != nil {
@@ -174,7 +174,7 @@ func (h *Handler) handleCreateBookItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.repository.CreateBookItem(types.BookItem{
+	err = h.repository.CreateBookCopy(types.BookCopy{
 		BookId:    payload.BookId,
 		Status:    payload.Status,
 		Location:  payload.Location,
@@ -182,36 +182,36 @@ func (h *Handler) handleCreateBookItem(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		log.Printf("error on CreateBookItem %v", err)
+		log.Printf("error on CreateBookCopy %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 	utils.WriteJSON(w, http.StatusCreated, nil)
 }
 
-// handleGetBookItems godoc
+// handleGetBookCopies godoc
 // @Summary Get items of a book
 // @Description Retrieves all items belonging to a book by its ID
 // @Tags books
 // @Accept  json
 // @Produce  json
 // @Param id path string true "Book ID"
-// @Success 200 {array} types.BookItem
+// @Success 200 {array} types.BookCopy
 // @Failure 500 {object} types.APIError
 // @Router /books/{id}/items [get]
-func (h *Handler) handleGetBookItems(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleGetBookCopies(w http.ResponseWriter, r *http.Request) {
 	bookId := r.PathValue("id")
 
-	bookItems, err := h.repository.GetBookItemsByBookId(bookId)
+	bookCopies, err := h.repository.GetBookCopiesByBookId(bookId)
 	if err != nil {
-		log.Printf("error on GetBookItemsByBookId %v", err)
+		log.Printf("error on GetBookCopiesByBookId %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, bookItems)
+	utils.WriteJSON(w, http.StatusOK, bookCopies)
 }
 
-// handleGetBookItemById godoc
+// handleGetBookCopyById godoc
 // @Summary Get a book item by ID
 // @Description Retrieves a specific book item by its ID
 // @Tags books
@@ -219,22 +219,22 @@ func (h *Handler) handleGetBookItems(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param bookId path string true "Book ID"
 // @Param itemId path string true "Book Item ID"
-// @Success 200 {object} types.BookItem
+// @Success 200 {object} types.BookCopy
 // @Failure 404 {object} types.APIError
 // @Failure 500 {object} types.APIError
 // @Router /books/{bookId}/items/{itemId} [get]
-func (h *Handler) handleGetBookItemById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleGetBookCopyById(w http.ResponseWriter, r *http.Request) {
 	itemId := r.PathValue("itemId")
 
-	bookItem, err := h.repository.GetBookItemById(itemId)
+	bookCopy, err := h.repository.GetBookCopyById(itemId)
 	if err != nil {
-		log.Printf("error on GetBookItemById %v", err)
+		log.Printf("error on GetBookCopyById %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-	if bookItem == nil {
+	if bookCopy == nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("book item with id %s not found", itemId))
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, bookItem)
+	utils.WriteJSON(w, http.StatusOK, bookCopy)
 }

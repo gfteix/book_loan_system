@@ -1,4 +1,4 @@
-CREATE TABLE book_items (
+CREATE TABLE book_copies (
     id UUID PRIMARY KEY,
     book_id UUID NOT NULL,
     location TEXT NOT NULL,
