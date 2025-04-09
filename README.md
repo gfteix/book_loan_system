@@ -21,6 +21,7 @@ A backend system to manage book loans.
 ## Technologies Used
 
 - **Go** - Backend
+- **PostgreSQL** - Database
 - **Docker** - Containerization
 - **RabbitMQ** - Message queuing
 
